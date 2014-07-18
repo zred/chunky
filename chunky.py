@@ -25,3 +25,5 @@ def file_split(input_file_name, count):
 			data = source.read(read_size)
 			with open(prefix + '.part' + str(read_list.index(read_size)), 'w+b') as target:
 				target.write(data)
+
+# identical read sizes in the read list cause an issue with target nameing.
