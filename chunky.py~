@@ -1,0 +1,27 @@
+def chunker(ifn,cs=1048576):
+	with open(ifn, 'r+b') as src:
+		while True:
+			buff = src.read(cs)
+			if not buff:
+				break
+			yield buff
+
+def unchunker(chunks, ofn):
+	with open(ofn, 'w+b') as tgt:
+		for chunk in chunks:
+			tgt.write(chunk)
+
+import os
+			
+def file_split(ifn, count):
+	ifn_size = os.lstat(ifn).st_size
+	prefix, ftype = ifn.split('.')
+	cs = ifn_size / count
+	cs_r = ifn_size % count
+	rl = [cs]*count
+	rl[0] += cs_r
+	with open(ifn, 'r+b') as src:
+		for rs in rl:
+			data = src.read(rs)
+			with open(prefix + '.part' + str(rl.index(rs)), 'w+b') as tgt:
+				tgt.write(data)
