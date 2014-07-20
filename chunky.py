@@ -1,3 +1,5 @@
+import os,re,glob
+
 def chunker(input_file_name,chunksize=1048576):
 	with open(input_file_name, 'r+b') as source:
 		while True:
@@ -11,7 +13,6 @@ def unchunker(chunks, output_file_name):
 		for chunk in chunks:
 			target.write(chunk)
 
-import os
 			
 def file_split(input_file_name, count):
 	input_file_name_size = os.lstat(input_file_name).st_size
@@ -24,7 +25,26 @@ def file_split(input_file_name, count):
 		read_index = 0
 		for read_size in read_list:
 			data = source.read(read_size)
-			with open(prefix + '.part.' + str(read_index), 'w+b') as target:
+			with open(prefix + '-' + ftype + '-part' + str(read_index), 'w+b') as target:
 				target.write(data)
 			read_index += 1
-# identical read sizes in the read list cause an issue with target nameing using the read_list.index.
+			
+def tryint(s):
+	try: return int(s)
+	except: return s
+
+def alnumkey(s):
+	return [ tryint(c) for c in re.split('([0-9]+)', s) ]
+	
+def hsort(l):
+	l.sort(key=alnumkey)
+
+def file_paste(prefix):
+	parts = glob.glob(prefix + '*' + '-part' + '*')
+	suffix = glob.glob(prefix + '*' + '-part' + '*')[0].split('-')[1]
+	hsort(parts)
+	for part in parts:
+		with open(part, 'r+b') as source:
+			data = source.read()
+			with open(prefix + '.' + suffix, 'a+b') as target:
+				target.write(data)
