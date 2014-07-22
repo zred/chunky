@@ -1,17 +1,17 @@
 import os,re,glob
 
-def chunker(ifn,cs=1048576):
-	with open(ifn, 'r+b') as src:
+def chunker(input_file_name,chunksize=1048576):
+	with open(input_file_name, 'r+b') as source:
 		while True:
-			buff = src.read(cs)
+			buff = source.read(chunksize)
 			if not buff:
 				break
 			yield buff
 
-def unchunker(chunks, ofn):
-	with open(ofn, 'w+b') as tgt:
+def unchunker(chunks, output_file_name):
+	with open(output_file_name, 'w+b') as target:
 		for chunk in chunks:
-			tgt.write(chunk)
+			target.write(chunk)
 
 			
 def file_split(input_file_name, count):
